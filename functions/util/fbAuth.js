@@ -1,5 +1,4 @@
-const admin = require("./admin");
-const { db } = require("./admin");
+const { db, admin } = require("./admin");
 
 module.exports = (req,res,next) => {
   let idToken;
