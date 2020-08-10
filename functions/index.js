@@ -84,25 +84,25 @@ exports.createNotificationOnComment = functions.firestore.document('comments/{id
       })
   })
 
-   exports.onUserImageChange = functions.firestore.document('/users/{userId}')
-    .onUpdate(change => {
-      console.log(change.before.data());
-      console.log(change.after.data());
-      if(change.before.data().imageUrl !== change.after.data().imageUrl) {
-        console.log('image has changed');
-        const batch = db.batch();
-        return db.collection('screams')
-          .where('userHandle', '==', change.before.data().handle)
-          .get()
-          .then(data => {
-            data.forEach(doc => {
-              const scream = db.doc(`/screams/${doc.id}`);
-              batch.update(scream, {userImage: change.after.data().imageUrl});
-            });
-            return batch.commit();
-          })
-      } else return true;
-    })
+exports.onUserImageChange = functions.firestore.document('/users/{userId}')
+.onUpdate(change => {
+  console.log(change.before.data());
+  console.log(change.after.data());
+  if(change.before.data().imageUrl !== change.after.data().imageUrl) {
+    console.log('image has changed');
+    const batch = db.batch();
+    return db.collection('screams')
+      .where('userHandle', '==', change.before.data().handle)
+      .get()
+      .then(data => {
+        data.forEach(doc => {
+          const scream = db.doc(`/screams/${doc.id}`);
+          batch.update(scream, {userImage: change.after.data().imageUrl});
+        });
+        return batch.commit();
+      })
+  } else return true;
+})
 
 exports.onScreamDelete = functions.firestore.document('/screams/{screamId}')
     .onDelete((snapshot, context) => {
